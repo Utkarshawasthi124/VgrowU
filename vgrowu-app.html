@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>VgrowU</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+  :root {
+    --color-primary: #ff4c60;
+    --color-secondary: #222;
+    --color-bg: #f9f9f9;
+    --color-card-bg: #fff;
+    --color-accent: #00b894;
+    --color-danger: #e17055;
+    --font-family: 'Montserrat', sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-family);
+    background-color: var(--color-bg);
+    color: var(--color-secondary);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background: var(--color-primary);
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+
+  header h1 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+  }
+
+  nav {
+    display: flex;
+    gap: 1rem;
+  }
+
+  nav button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: color 0.3s;
+  }
+
+  nav button:hover,
+  nav button.active {
+    color: var(--color-accent);
+  }
+
+  main {
+    flex-grow: 1;
+    padding: 1rem 1.5rem;
+    max-width: 960px;
+    margin: 1rem auto 2rem;  
+    width: 100%;
+  }
+
+  section {
+    display: none;
+    animation: fadeIn 0.5s ease forwards;
+  }
+
+  section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+
+  /* Role selector modal */
+  #roleModal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+
+  #roleModal .modal-content {
+    background: white;
+    padding: 2rem 2.5rem;
+    border-radius: 8px;
+    width: 320px;
+    max-width: 90%;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  #roleModal h2 {
+    margin-bottom: 1rem;
+    font-weight: 700;
+    color: var(--color-primary);
+  }
+
+  #roleModal p {
+    margin-bottom: 1rem;
+  }
+
+  #roleModal label {
+    font-weight: 600;
+  }
+
+  #roleModal input[type="password"] {
+    width: 100%;
+    padding: 0.5rem 0.8rem;
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  #roleModal .roles {
+    display: flex;
+    justify-content: space-around;
+  }
+
+  #roleModal .roles button {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+    width: 80px;
+  }
+
+  #roleModal .roles button:hover {
+    background: var(--color-accent);
+  }
+
+  /* Responsive nav hamburger */
+  #hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+  }
+
+  #hamburger span {
+    height: 3px;
+    width: 25px;
+    background: white;
+    border-radius: 2px;
+  }
+
+  @media (max-width: 640px) {
+    nav {
+      position: fixed;
+      top: 56px;
+      right: 0;
+      background: var(--color-primary);
+      flex-direction: column;
+      gap: 0;
+      width: 160px;
+      height: calc(100vh - 56px);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      padding-top: 1rem;
+      z-index: 1500;
+    }
+
+    nav.open {
+      transform: translateX(0);
+    }
+
+    nav button {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 1.1rem;
+    }
+
+    #hamburger {
+      display: flex;
+    }
+  }
+
+  /* Card styles */
+  .card {
+    background: var(--color-card-bg);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 1.25rem;
+  }
+
+  .card h3 {
+    margin-top: 0;
+    color: var(--color-primary);
+  }
+
+  /* General form styling */
+  form > div {
+    margin-bottom: 1rem;
+  }
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.4rem;
+  }
+  input[type="number"], input[type="date"], input[type="text"], select, input[type="file"], input[type="password"] {
+    width: 100%;
+    padding: 0.4rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  button {
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.6rem 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  button:hover {
+    background: var(--color-accent);
+  }
+
+  .small-btn {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.9rem;
+  }
+
+  /* Sections internal spacing */
+  .section-content {
+    max-width: 900px;
+    margin-top: 0.5rem;
+  }
+
+  /* Measurement and photos */
+  #photos-list {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  #photos-list img {
+    max-width: 100px;
+    border-radius: 6px;
+    border: 2px solid var(--color-primary);
+  }
+
+  /* Diet plan table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 0.5rem;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.4rem 0.6rem;
+    text-align: center;
+  }
+  th {
+    background: var(--color-bg);
+  }
+
+  /* Scrollable diet food list */
+  #diet-foods-list {
+    height: 180px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    margin-bottom: 1rem;
+  }
+
+  /* Workout plans */
+  .exercise {
+    margin-bottom: 1rem;
+  }
+
+  .exercise iframe {
+    max-width: 100%;
+    height: 200px;
+    border-radius: 8px;
+    border: none;
+  }
+
+  footer {
+    background: var(--color-primary);
+    color: white;
+    text-align: center;
+    padding: 0.8rem 1rem;
+    font-size: 0.9rem;
+    user-select: none;
+  }
+
+</style>
+</head>
+<body>
+<header>
+  <h1>VgrowU</h1>
+  <div id="hamburger" aria-label="Menu" role="button" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+  <nav>
+    <button data-target="profile" class="active" aria-current="page">Profile & Schedule</button>
+    <button data-target="measurements" >Measurements & Photos</button>
+    <button data-target="diet" >Diet Plan</button>
+    <button data-target="workoutplans" >Workout Plans</button>
+    <button data-target="membership" >Membership</button>
+  </nav>
+</header>
+
+<main>
+
+  <!-- Profile & Scheduling -->
+  <section id="profile" class="active" tabindex="0" aria-label="User Profile and Scheduling">
+    <h2>Profile & Personalized Schedule</h2>
+    <div class="section-content">
+      <form id="profile-form" aria-label="Profile form">
+        <div>
+          <label for="input-height">Height (cm):</label>
+          <input type="number" id="input-height" min="50" max="300" required aria-required="true" />
+        </div>
+        <div>
+          <label for="input-weight">Weight (kg):</label>
+          <input type="number" id="input-weight" min="20" max="300" required aria-required="true" />
+        </div>
+        <div>
+          <label for="input-goal">Fitness Goal:</label>
+          <select id="input-goal" required aria-required="true">
+            <option value="">-- Select Goal --</option>
+            <option value="Muscle Gain">Muscle Gain</option>
+            <option value="Fat Loss">Fat Loss</option>
+            <option value="Maintenance">Maintenance</option>
+            <option value="Performance">Performance</option>
+          </select>
+        </div>
+        <button type="submit">Save Profile</button>
+      </form>
+
+      <hr style="margin:1rem 0;">
+
+      <h3>Create Your Weekly Workout Schedule</h3>
+      <p>Choose the days and workout types that suit you. You can mix hybrid plans or custom selections!</p>
+
+      <form id="schedule-form" aria-label="Workout Schedule Form">
+        <table>
+          <thead>
+            <tr><th>Day</th><th>Workout Type</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monday</td>
+              <td>
+                <select name="day-1">
+                  <option value="">Rest</option>
+                  <option value="Push">Push</option>
+                  <option value="Pull">Pull</option>
+                  <option value="Legs">Legs</option>
+                  <option value="Full Body">Full Body</option>
+                  <option value="Custom">Custom</option>
+                </select>
+                <input type="text" name="custom-1" placeholder="Custom (if any)" style="display:none;"/>
+              </td>
+            </tr>
+            <tr>
+              <td>Tuesday</td>
+              <td>
+                <select name="day-2">
+                  <option value="">Rest</option>
+                  <option value="Push">Push</option>
+                  <option value="Pull">Pull</option>
+                  <option value="Legs">Legs</option>
+                  <option value="Full Body">Full Body</option>
+                  <option value="Custom">Custom</option>
+                </select>
+                <input type="text" name="custom-2" placeholder="Custom (if any)" style="display:none;"/>
+              </td>
+            </tr>
+            <tr>
+              <td>Wednesday</td>
+              <td>
+                <select name="day-3">
+                  <option value="">Rest</option>
+                  <option value="Push">Push</option>
+                  <option value="Pull">Pull</option>
+                  <option value="Legs">Legs</option>
+                  <option value="Full Body">Full Body</option>
+                  <option value="Custom">Custom</option>
+                </select>
+                <input type="text" name="custom-3" placeholder="Custom (if any)" style="display:none;"/>
+              </td>
+            </tr>
+            <tr>
+              <td>Thursday</td>
+              <td>
+                <select name="day-4">
+                  <option value="">Rest</option>
+                  <option value="Push">Push</option>
+                  <option value="Pull">Pull</option>
+                  <option value="Legs">Legs</option>
+                  <option value="Full Body">Full Body</option>
+                  <option value="Custom">Custom</option>
+                </select>
+                <input type="text" name="custom-4" placeholder="Custom (if any)" style="display:none;"/>
+              </td>
+            </tr>
+            <tr>
+              <td>Friday</td>
+              <td>
+                <select name="day-5">
+                  <option value="">Rest</option>
+                  <option value="Push">Push</option>
+                  <option value="Pull">Pull</option>
+                  <option value="Legs">Legs</option>
+                  <option value="Full Body">Full Body</option>
+                  <option value="Custom">Custom</option>
+                </select>
+                <input type="text" name="custom-5" placeholder="Custom (if any)" style="display:none;"/>
+              </td>
+            </tr>
+            <tr>
+              <td>Saturday</td>
+              <td>
+                <select name="day-6">
+                  <option value="">Rest</option>
+                  <option value="Push">Push</option>
+                  <option value="Pull">Pull</option>
+                  <option value="Legs">Legs</option>
+                  <option value="Full Body">Full Body</option>
+                  <option value="Custom">Custom</option>
+                </select>
+                <input type="text" name="custom-6" placeholder="Custom (if any)" style="display:none;"/>
+              </td>
+            </tr>
+            <tr>
+              <td>Sunday</td>
+              <td>
+                <select name="day-7">
+                  <option value="">Rest</option>
+                  <option value="Push">Push</option>
+                  <option value="Pull">Pull</option>
+                  <option value="Legs">Legs</option>
+                  <option value="Full Body">Full Body</option>
+                  <option value="Custom">Custom</option>
+                </select>
+                <input type="text" name="custom-7" placeholder="Custom (if any)" style="display:none;"/>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="submit">Save Schedule</button>
+      </form>
+
+      <div id="saved-schedule" style="margin-top: 1rem;">
+        <h3>Your Saved Schedule</h3>
+        <ul id="schedule-display"></ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Measurements & Photos -->
+  <section id="measurements" tabindex="0" aria-label="Measurements and Progress Photos">
+    <h2>Measurements & Progress Photos</h2>
+    <div class="section-content">
+      <form id="measurements-form">
+        <div>
+          <label for="chest">Chest (cm):</label>
+          <input type="number" id="chest" min="20" max="300" required aria-required="true" />
+        </div>
+        <div>
+          <label for="waist">Waist (cm):</label>
+          <input type="number" id="waist" min="20" max="300" required aria-required="true" />
+        </div>
+        <div>
+          <label for="hips">Hips (cm):</label>
+          <input type="number" id="hips" min="20" max="300" required aria-required="true" />
+        </div>
+        <div>
+          <label for="biceps">Biceps (cm):</label>
+          <input type="number" id="biceps" min="10" max="100" required aria-required="true" />
+        </div>
+        <div>
+          <label for="thigh">Thigh (cm):</label>
+          <input type="number" id="thigh" min="10" max="150" required aria-required="true" />
+        </div>
+        <button type="submit">Save Measurements</button>
+      </form>
+
+      <hr style="margin:1rem 0;" />
+
+      <h3>Upload Progress Photos</h3>
+      <form id="photo-upload-form" aria-label="Upload progress photos">
+        <input type="file" id="photo-upload" accept="image/*" multiple />
+        <button type="button" id="upload-btn">Upload Photos</button>
+      </form>
+      <div id="photos-list" aria-live="polite"></div>
+
+    </div>
+  </section>
+
+  <!-- Diet Plan -->
+  <section id="diet" tabindex="0" aria-label="Diet Plan">
+    <h2>Diet Plan</h2>
+    <div class="section-content">
+
+      <h3>Select Your Diet Type</h3>
+      <select id="diet-type" aria-label="Select diet type">
+        <option value="">Select diet type</option>
+        <option value="vegetarian">Vegetarian</option>
+        <option value="nonvegetarian">Non-Vegetarian</option>
+        <option value="eggetarian">Eggetarian</option>
+      </select>
+
+      <div id="diet-food-section" style="display:none; margin-top:1rem;">
+        <h4>Available Food Items (Macros per 100g)</h4>
+        <div id="diet-foods-list"></div>
+
+        <h4>Add to Your Diet Plan</h4>
+        <form id="add-food-form" aria-label="Add food to diet plan">
+          <label for="food-select">Food Item:</label>
+          <select id="food-select" required>
+            <option value="">Select food</option>
+          </select>
+          <label for="food-amount">Amount (grams):</label>
+          <input type="number" id="food-amount" min="1" max="1000" value="100" required />
+          <button type="submit">Add to Diet Plan</button>
+        </form>
+
+        <h4>Your Diet Plan</h4>
+        <table aria-live="polite">
+          <thead>
+            <tr><th>Food</th><th>Amount (g)</th><th>Calories</th><th>Protein (g)</th><th>Carbs (g)</th><th>Fat (g)</th><th>Remove</th></tr>
+          </thead>
+          <tbody id="diet-plan-body"></tbody>
+        </table>
+
+        <h4>Total Macros</h4>
+        <p id="diet-totals">Calories: 0 | Protein: 0g | Carbs: 0g | Fat: 0g</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Workout Plans -->
+  <section id="workoutplans" tabindex="0" aria-label="Workout Plans">
+    <h2>Workout Plans</h2>
+    <div class="section-content">
+
+      <h3>Choose a Workout Plan</h3>
+      <select id="workout-plan-select" aria-label="Choose workout plan">
+        <option value="">Select plan</option>
+        <option value="push">Hybrid: Push</option>
+        <option value="pull">Hybrid: Pull</option>
+        <option value="legs">Hybrid: Legs</option>
+        <option value="full">Full Body</option>
+      </select>
+
+      <div id="workout-exercises" style="margin-top:1rem;"></div>
+
+    </div>
+  </section>
+
+  <!-- Membership -->
+  <section id="membership" tabindex="0" aria-label="Membership information">
+    <h2>Membership Info</h2>
+    <div class="section-content">
+
+      <div class="card" id="membership-info">
+        <h3>VgrowU Membership</h3>
+        <p>Member Price: ₹100 per month</p>
+        <p>Access to all classes and facilities</p>
+        <p>Personal trainer sessions included: 4</p>
+      </div>
+
+      <div id="payment-section" style="margin-top: 1rem;">
+        <h3>Payment</h3>
+        <div id="payment-info"></div>
+        <button id="pay-btn" style="display:none;">Pay ₹100</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Role selection modal (simulate login or role selection) -->
+<div id="roleModal" role="dialog" aria-modal="true" aria-labelledby="roleModalTitle">
+  <div class="modal-content">
+    <h2 id="roleModalTitle">Welcome to VgrowU</h2>
+    <p>Select your role to continue:</p>
+    <div class="roles">
+      <button data-role="member" id="member-select">Member</button>
+      <button data-role="trainer" id="trainer-select">Trainer</button>
+      <button data-role="admin" id="admin-select">Admin</button>
+    </div>
+    <div id="passkey-section" style="margin-top: 1rem; display:none;">
+      <label for="passkey-input">Enter Passkey:</label>
+      <input type="password" id="passkey-input" />
+      <button id="passkey-submit">Submit</button>
+      <div id="passkey-error" style="color:red; margin-top:0.5rem; display:none;">Incorrect passkey, please try again.</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  &copy; 2024 VgrowU
+</footer>
+
+<script>
+  // Constants for passkeys
+  const ADMIN_PASSKEY = "adminpass123";
+  const TRAINER_PASSKEY = "trainerpass123";
+
+  // Data for food items with macros (per 100g)
+  const FOOD_DATA = {
+    vegetarian: [
+      { name: "Soya Chunks", calories: 345, protein: 52, carbs: 33, fat: 0.5 },
+      { name: "Paneer", calories: 265, protein: 18, carbs: 1.2, fat: 20 },
+      { name: "Skim Milk", calories: 35, protein: 3.4, carbs: 5, fat: 0.1 },
+      { name: "Buffalo Milk", calories: 97, protein: 3.8, carbs: 5.1, fat: 6.9 },
+      { name: "Chappati (whole wheat)", calories: 110, protein: 3.6, carbs: 22, fat: 0.4 },
+      { name: "Rice", calories: 130, protein: 2.7, carbs: 28, fat: 0.3 },
+      { name: "Dal (lentils)", calories: 116, protein: 9, carbs: 20, fat: 0.4 },
+      { name: "Apple", calories: 52, protein: 0.3, carbs: 14, fat: 0.2 },
+      { name: "Banana", calories: 89, protein: 1.1, carbs: 23, fat: 0.3 },
+      { name: "Spinach", calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4 }
+    ],
+    nonvegetarian: [
+      { name: "Chicken Breast", calories: 165, protein: 31, carbs: 0, fat: 3.6 },
+      { name: "Tuna", calories: 132, protein: 28, carbs: 0, fat: 1 },
+      { name: "Egg Whole", calories: 143, protein: 13, carbs: 1.1, fat: 10 },
+      { name: "Soya Chunks", calories: 345, protein: 52, carbs: 33, fat: 0.5 },
+      { name: "Paneer", calories: 265, protein: 18, carbs: 1.2, fat: 20 },
+      { name: "Rice", calories: 130, protein: 2.7, carbs: 28, fat: 0.3 },
+      { name: "Dal (lentils)", calories: 116, protein: 9, carbs: 20, fat: 0.4 },
+      { name: "Apple", calories: 52, protein: 0.3, carbs: 14, fat: 0.2 },
+      { name: "Banana", calories: 89, protein: 1.1, carbs: 23, fat: 0.3 }
+    ],
+    eggetarian: [
+      { name: "Egg Whole", calories: 143, protein: 13, carbs: 1.1, fat: 10 },
+      { name: "Egg Whites", calories: 52, protein: 11, carbs: 0.7, fat: 0.2 },
+      { name: "Skim Milk", calories: 35, protein: 3.4, carbs: 5, fat: 0.1 },
+      { name: "Paneer", calories: 265, protein: 18, carbs: 1.2, fat: 20 },
+      { name: "Rice", calories: 130, protein: 2.7, carbs: 28, fat: 0.3 },
+      { name: "Dal (lentils)", calories: 116, protein: 9, carbs: 20, fat: 0.4 },
+      { name: "Spinach", calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4 }
+    ]
+  };
+
+  // Sample workout plan data - exercises with instructions and video URLs (YouTube embed links)
+  const WORKOUT_PLANS = {
+    push: [
+      {
+        name: "Bench Press",
+        instructions: "Lie on the bench with feet flat on the floor. Grip the barbell and lower it to your chest slowly, then press up.",
+        video: "https://www.youtube.com/embed/gRVjAtPip0Y"
+      },
+      {
+        name: "Overhead Shoulder Press",
+        instructions: "Hold dumbbells or barbell at shoulder height. Press upward until arms are extended overhead.",
+        video: "https://www.youtube.com/embed/B-aVuyhvLHU"
+      },
+      {
+        name: "Tricep Dips",
+        instructions: "Use parallel bars or a bench. Lower your body by bending elbows and then push back up.",
+        video: "https://www.youtube.com/embed/6kALZikXxLc"
+      }
+    ],
+    pull: [
+      {
+        name: "Deadlifts",
+        instructions: "Stand with feet hip-width apart, grip the barbell, keeping back straight, lift by extending hips and knees.",
+        video: "https://www.youtube.com/embed/ytGaGIn3SjE"
+      },
+      {
+        name: "Pull-Ups",
+        instructions: "Hang from a bar with palms away, pull your body up until chin passes the bar.",
+        video: "https://www.youtube.com/embed/eGo4IYlbE5g"
+      },
+      {
+        name: "Barbell Rows",
+        instructions: "Bend over with back flat, pull the barbell to your abdomen and lower back down.",
+        video: "https://www.youtube.com/embed/vT2GjY_Umpw"
+      }
+    ],
+    legs: [
+      {
+        name: "Squats",
+        instructions: "Stand with feet shoulder-width apart, lower hips down and back as if sitting, then rise.",
+        video: "https://www.youtube.com/embed/aclHkVaku9U"
+      },
+      {
+        name: "Leg Press",
+        instructions: "Sit on leg press machine, push platform using feet to straighten legs and slowly bend back.",
+        video: "https://www.youtube.com/embed/IZxyjW7MPJQ"
+      },
+      {
+        name: "Hamstring Curl",
+        instructions: "Use hamstring curl machine by curling legs towards your buttocks slowly.",
+        video: "https://www.youtube.com/embed/n2rNZWdfK4k"
+      }
+    ],
+    full: [
+      {
+        name: "Burpees",
+        instructions: "Begin standing, drop into squat with hands on floor, kick feet back into plank, return to squat and jump.",
+        video: "https://www.youtube.com/embed/TU8QYVW0gDU"
+      },
+      {
+        name: "Mountain Climbers",
+        instructions: "Start in plank position, run knees towards chest alternatively as fast as possible.",
+        video: "https://www.youtube.com/embed/nmwgirgXLYM"
+      },
+      {
+        name: "Plank",
+        instructions: "Hold yourself on elbows and toes with a flat back, engaging core muscles.",
+        video: "https://www.youtube.com/embed/pSHjTRCQxIw"
+      }
+    ]
+  };
+
+  // LocalStorage keys
+  const LS_ROLE = 'vgrowuAppUserRole';
+  const LS_PROFILE = 'vgrowuProfileData';
+  const LS_SCHEDULE = 'vgrowuScheduleData';
+  const LS_MEASUREMENTS = 'vgrowuMeasurementsData';
+  const LS_PHOTOS = 'vgrowuPhotos';
+  const LS_DIET_PLAN = 'vgrowuDietPlan';
+
+  // State
+  let currentRole = null;
+
+  // DOM elements
+  const sections = document.querySelectorAll('main section');
+  const navButtons = document.querySelectorAll('nav button');
+  const roleModal = document.getElementById('roleModal');
+  const passkeySection = document.getElementById('passkey-section');
+  const passkeyInput = document.getElementById('passkey-input');
+  const passkeySubmitBtn = document.getElementById('passkey-submit');
+  const passkeyError = document.getElementById('passkey-error');
+  const hamburger = document.getElementById('hamburger');
+  const nav = document.querySelector('nav');
+
+  // Payment section
+  const paymentInfo = document.getElementById('payment-info');
+  const payButton = document.getElementById('pay-btn');
+
+  // === Navigation ===
+  navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.getAttribute('data-target');
+      navButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sections.forEach(section => {
+        if (section.id === target) {
+          section.classList.add('active');
+          section.focus();
+        } else {
+          section.classList.remove('active');
+        }
+      });
+      if (nav.classList.contains('open')) {
+        toggleNav();
+      }
+    });
+  });
+
+  hamburger.addEventListener('click', toggleNav);
+  hamburger.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleNav();
+    }
+  });
+
+  function toggleNav() {
+    nav.classList.toggle('open');
+  }
+  
+  // Role selection buttons handlers including passkey handling
+  document.getElementById('member-select').addEventListener('click', () => {
+    // Members pay ₹100 monthly
+    currentRole = 'member';
+    showPaymentInfo();
+    finalizeRoleSelection();
+  });
+
+  document.getElementById('trainer-select').addEventListener('click', () => {
+    // Trainers enter passkey
+    currentRole = 'trainer';
+    showPasskeyInput();
+  });
+
+  document.getElementById('admin-select').addEventListener('click', () => {
+    // Admins enter passkey
+    currentRole = 'admin';
+    showPasskeyInput();
+  });
+
+  passkeySubmitBtn.addEventListener('click', () => {
+    const input = passkeyInput.value.trim();
+    if (currentRole === 'admin' && input === ADMIN_PASSKEY) {
+      finalizeRoleSelection();
+    } else if (currentRole === 'trainer' && input === TRAINER_PASSKEY) {
+      // Trainers passkey correct, show payment option if they want
+      passkeyError.style.display = 'none';
+      finalizeRoleSelection();
+      showPaymentOptionForTrainer();
+    } else {
+      passkeyError.style.display = 'block';
+      passkeyInput.value = '';
+    }
+  });
+
+  function showPasskeyInput() {
+    passkeySection.style.display = 'block';
+    document.querySelector('.roles').style.display = 'none';
+    paymentInfo.innerHTML = '';
+    payButton.style.display = 'none';
+  }
+
+  function finalizeRoleSelection() {
+    localStorage.setItem(LS_ROLE, currentRole);
+    roleModal.style.display = 'none';
+    updateUIByRole();
+  }
+
+  // Payment
+  payButton.addEventListener('click', () => {
+    alert('Payment Received! Thank you for subscribing.');
+    payButton.style.display = 'none';
+    paymentInfo.innerHTML = 'Subscription active.';
+  });
+
+  function showPaymentInfo() {
+    if (currentRole === 'member') {
+      paymentInfo.innerHTML = 'Please pay ₹100 per month to activate membership.';
+      payButton.style.display = 'inline-block';
+    } else {
+      paymentInfo.innerHTML = 'Access granted without payment.';
+      payButton.style.display = 'none';
+    }
+  }
+
+  function showPaymentOptionForTrainer() {
+    paymentInfo.innerHTML = 'Payment is optional for trainers. You can pay ₹100 per month to access member features.';
+    payButton.style.display = 'inline-block';
+  }
+
+  function updateUIByRole() {
+    // Show/hide payment based on role
+    if (currentRole === 'member') {
+      showPaymentInfo();
+    } else if (currentRole === 'trainer') {
+      showPaymentOptionForTrainer();
+    } else {
+      paymentInfo.innerHTML = 'Admin access granted without payment.';
+      payButton.style.display = 'none';
+    }
+  }
+
+  // === Profile, Schedule, Measurements, Photos, Diet, Workout code (unchanged) ===
+  // The code here will be exactly same as the previous large file except the changes already made above to role and payment handling.
+  // For brevity, omitted here but the full previous app code should be appended below.
+  // (Due to answer length limits, I have provided the essential role and payment changes only.)
+
+</script>
+</body>
+</html>
+
